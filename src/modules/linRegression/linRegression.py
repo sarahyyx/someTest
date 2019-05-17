@@ -2,8 +2,8 @@ from logs import logDecorator as lD
 import jsonref, pprint
 
 config = jsonref.load(open('../config/config.json'))
-module1_config = jsonref.load(open('../config/modules/module1.json'))
-logBase = config['logging']['logBase'] + '.modules.module1.module1'
+linRegression_config = jsonref.load(open('../config/modules/linRegression.json'))
+logBase = config['logging']['logBase'] + '.modules.linRegression.linRegression'
 
 
 @lD.log(logBase + '.doSomething')
@@ -19,7 +19,7 @@ def doSomething(logger, inputDict):
     '''
 
     try:
-        print('We are in module 1')
+        print('We are in linRegression module')
 
         x = inputDict['x']
         y = inputDict['y']
