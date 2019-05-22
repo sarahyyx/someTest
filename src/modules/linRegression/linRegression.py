@@ -29,28 +29,6 @@ def doSomething(logger, inputDict):
 
     return 
 
-@lD.log(logBase + '.printData')
-def printData(logger, x, y):
-    '''print a line
-    
-    This function simply prints a single line
-    
-    Parameters
-    ----------
-    logger : {logging.Logger}
-        The logger used for logging error information
-    '''
-
-    try:
-        print('We are in printData function')
-
-        print(x)
-        print(y)
-
-    except Exception as e:
-        logger.error('printData failed because of {}'.format(e))
-
-    return
 
 @lD.log(logBase + '.fitModel')
 def fitModel(logger, x, y):
@@ -81,7 +59,6 @@ def fitModel(logger, x, y):
         plt.title("LinReg Test")
 
         y_pred = model.predict(x)
-        #print("predicted response: ", y_pred, sep="\n")
         ax.plot(x, y_pred, 'r')
         plt.savefig('../results/plot.png')
 
@@ -126,8 +103,6 @@ def main(logger, resultsDict):
     x = np.load(linRegression_config["params"]["x"])
     x = np.array(x).reshape((-1,1))
     y = np.load(linRegression_config["params"]["y"])
-
-    #printData(x,y)
 
     fitModel(x,y)
 
