@@ -2,11 +2,12 @@ from logs import logDecorator as lD
 import jsonref, pprint
 
 config = jsonref.load(open('../config/config.json'))
+module1_config = jsonref.load(open('../config/modules/module1.json'))
 logBase = config['logging']['logBase'] + '.modules.module1.module1'
 
 
 @lD.log(logBase + '.doSomething')
-def doSomething(logger):
+def doSomething(logger, inputDict):
     '''print a line
     
     This function simply prints a single line
@@ -17,9 +18,17 @@ def doSomething(logger):
         The logger used for logging error information
     '''
 
-    print('We are in module 1')
+    try:
+        print('We are in module 1')
 
-    return
+        x = inputDict['x']
+        y = inputDict['y']
+        sum_xy = x+y
+        print(sum_xy)
+    except Exception as e:
+        logger.error('doSomething failed because of {}'.format(e))
+
+    return 
 
 @lD.log(logBase + '.main')
 def main(logger, resultsDict):
@@ -45,7 +54,12 @@ def main(logger, resultsDict):
     print('We get a copy of the result dictionary over here ...')
     pprint.pprint(resultsDict)
 
-    doSomething()
+    # x = module1_config["inputs"]["x"].GetInt()
+    # y = module1_config["inputs"]["y"].GetInt()
+
+    inputDict = module1_config["inputs"]
+
+    doSomething(inputDict)
 
     print('Getting out of Module 1')
     print('-'*30)
