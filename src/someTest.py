@@ -5,6 +5,9 @@ from logs           import logDecorator  as lD
 from lib.testLib    import simpleLib     as sL
 from lib.argParsers import addAllParsers as aP
 
+import matplotlib
+matplotlib.use('Agg')
+
 config   = jsonref.load(open('../config/config.json'))
 logBase  = config['logging']['logBase']
 logLevel = config['logging']['level']

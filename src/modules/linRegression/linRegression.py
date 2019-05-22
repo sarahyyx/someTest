@@ -1,5 +1,8 @@
 from logs import logDecorator as lD 
 import jsonref, pprint
+import numpy as np 
+import matplotlib.pyplot as plt
+from sklearn.linear_model import LinearRegression
 
 config = jsonref.load(open('../config/config.json'))
 linRegression_config = jsonref.load(open('../config/modules/linRegression.json'))
@@ -19,16 +22,74 @@ def doSomething(logger, inputDict):
     '''
 
     try:
-        print('We are in linRegression module')
+        print('We are in test function')
 
-        x = inputDict['x']
-        y = inputDict['y']
-        sum_xy = x+y
-        print(sum_xy)
     except Exception as e:
         logger.error('doSomething failed because of {}'.format(e))
 
     return 
+
+@lD.log(logBase + '.printData')
+def printData(logger, x, y):
+    '''print a line
+    
+    This function simply prints a single line
+    
+    Parameters
+    ----------
+    logger : {logging.Logger}
+        The logger used for logging error information
+    '''
+
+    try:
+        print('We are in printData function')
+
+        print(x)
+        print(y)
+
+    except Exception as e:
+        logger.error('printData failed because of {}'.format(e))
+
+    return
+
+@lD.log(logBase + '.fitModel')
+def fitModel(logger, x, y):
+    '''print a line
+    
+    This function simply prints a single line
+    
+    Parameters
+    ----------
+    logger : {logging.Logger}
+        The logger used for logging error information
+    '''
+
+    try:
+        print('We are in fitModel function')
+
+        model = LinearRegression()
+        model.fit(x,y)
+
+        print("intercept: ", model.intercept_)
+        print("slope: ", model.coef_)
+        b0 = model.intercept_
+        b1 = model.coef_
+
+        fig = plt.figure()
+        ax = plt.subplot(111)
+        ax.scatter(x,y, marker="x")
+        plt.title("LinReg Test")
+
+        y_pred = model.predict(x)
+        #print("predicted response: ", y_pred, sep="\n")
+        ax.plot(x, y_pred, 'r')
+        plt.savefig('../results/plot.png')
+
+
+    except Exception as e:
+        logger.error('fitModel failed because of {}'.format(e))
+
+    return
 
 @lD.log(logBase + '.main')
 def main(logger, resultsDict):
@@ -49,7 +110,7 @@ def main(logger, resultsDict):
     '''
 
     print('='*30)
-    print('Main function of module 1')
+    print('Main function of linRegression module')
     print('='*30)
     print('We get a copy of the result dictionary over here ...')
     pprint.pprint(resultsDict)
@@ -57,11 +118,20 @@ def main(logger, resultsDict):
     # x = module1_config["inputs"]["x"].GetInt()
     # y = module1_config["inputs"]["y"].GetInt()
 
-    inputDict = module1_config["inputs"]
+
+    inputDict = linRegression_config["inputs"]
 
     doSomething(inputDict)
 
-    print('Getting out of Module 1')
+    x = np.load(linRegression_config["params"]["x"])
+    x = np.array(x).reshape((-1,1))
+    y = np.load(linRegression_config["params"]["y"])
+
+    #printData(x,y)
+
+    fitModel(x,y)
+
+    print('Getting out of linRegression module')
     print('-'*30)
 
     return

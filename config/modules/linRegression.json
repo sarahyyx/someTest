@@ -1,8 +1,8 @@
 {
-    "inputs"  : {
-    	"x": 1,
-    	"y": 2
-    },
+    "inputs"  : {},
     "outputs" : {},
-    "params"  : {}
+    "params"  : {
+    	"x": "/home/sarah/Documents/programs/someTest/data/raw_data/x.npy",
+    	"y": "/home/sarah/Documents/programs/someTest/data/raw_data/y.npy"
+    }
 }
