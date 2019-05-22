@@ -1,7 +1,7 @@
-'''[one line description of the module]
+'''Simple Linear Regression Module
 
-[this is a 
-multiline description of what the module does.] 
+This model takes in x and y numpy arrays from the data directory and uses the data to fit a linear regression model, which is plotted on a scatter plot.
+The same x array is then passed through the model to generate a fitted linear regression line, which is plotted on the same plot. 
 
 Before you Begin
 ================
@@ -17,6 +17,11 @@ Over here, you should provide as much information as possible for what the modul
 You should mention the data sources that the module uses, and important operations that
 the module performs.
 ]
+Data sources: 
+ - x, y are found in the someTest/data directory, and are both numpy arrays
+ Important operations:
+  - Fits x and y data into a linear regression model
+  - Passes x data into the model to obtain predictions of the y value
 
 Results
 =======
@@ -25,6 +30,7 @@ Results
 You want to describe the results of running this module. This would include instances of
 the database that the module updates, as well as any other files that the module creates. 
 ]
+A plot.png showing the plotted results will be created in the data folder.
 
 Specifications:
 ===============

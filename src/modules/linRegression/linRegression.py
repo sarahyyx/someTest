@@ -4,6 +4,8 @@ import numpy as np
 import matplotlib.pyplot as plt
 from sklearn.linear_model import LinearRegression
 
+from lib.databaseIO import pgIO
+
 config = jsonref.load(open('../config/config.json'))
 linRegression_config = jsonref.load(open('../config/modules/linRegression.json'))
 logBase = config['logging']['logBase'] + '.modules.linRegression.linRegression'
@@ -29,28 +31,62 @@ def doSomething(logger, inputDict):
 
     return 
 
-@lD.log(logBase + '.printData')
-def printData(logger, x, y):
-    '''print a line
+@lD.log(logBase + '.fitModel')
+def generateReport(logger, r):
     
-    This function simply prints a single line
-    
-    Parameters
-    ----------
-    logger : {logging.Logger}
-        The logger used for logging error information
-    '''
+    report = f'''
 
-    try:
-        print('We are in printData function')
+# Title of the Report
 
-        print(x)
-        print(y)
+# Abstract: Some text for the Abstract ...
 
-    except Exception as e:
-        logger.error('printData failed because of {}'.format(e))
+# Description
+
+$$ y = m x + c $$
+
+$x$ and $y$ are  ...
+
+The calucalted values for $m$ and $c$ are ...
+
+Details of the input ...
+
+| variable | median | mean | std |
+|----------|--------|------|-----|
+| $x$      | {r['x-median']} | 25 | 1 |
+| $y$      | {r['y-median']} | 25 | 1 |
+
+# Results
+
+This is the value of m: 
+
+# Conclusion
+
+Some conclusion
+
+        '''
+
+    with open('../report/report1.md', 'w') as f:
+        f.write( report )
 
     return
+
+@lD.log(logBase + '.getUserMSE')
+def getUserMSE(logger, user):
+
+    data = []
+
+    try:
+        query = '''
+        select * from raw_data.mse where siteid = %s and backgroundid=%s limit 10;
+        '''
+
+        data = pgIO.getAllData(query, user)
+
+    except Exception as e:
+        logger.error(f'Unable to get data for user: {user}: {e}')
+
+    return data 
+
 
 @lD.log(logBase + '.fitModel')
 def fitModel(logger, x, y):
@@ -72,22 +108,44 @@ def fitModel(logger, x, y):
 
         print("intercept: ", model.intercept_)
         print("slope: ", model.coef_)
-        b0 = model.intercept_
-        b1 = model.coef_
-
-        fig = plt.figure()
-        ax = plt.subplot(111)
-        ax.scatter(x,y, marker="x")
-        plt.title("LinReg Test")
-
-        y_pred = model.predict(x)
-        #print("predicted response: ", y_pred, sep="\n")
-        ax.plot(x, y_pred, 'r')
-        plt.savefig('../results/plot.png')
 
 
     except Exception as e:
         logger.error('fitModel failed because of {}'.format(e))
+
+    return model
+
+@lD.log(logBase + '.generatePlot')
+def generatePlot(logger, x, y, m):
+    '''print a line
+    
+    This function simply prints a single line
+    
+    Parameters
+    ----------
+    logger : {logging.Logger}
+        The logger used for logging error information
+    '''
+
+    try:
+        print('We are in generatePlot function')
+
+        fig = plt.figure(figsize=(4,3))
+        ax = plt.axes([0.15, 0.22, 0.84, 0.77])
+        ax.plot(x,y, "s", mfc='None', mec='black', alpha=0.4)
+        # plt.title("LinReg Test")
+
+        y_pred = m.predict(x)
+        ax.plot(x, y_pred, color='black', lw=2)
+
+        plt.xlabel(r'$x$')
+        plt.ylabel(r'$y$')
+
+        plt.savefig('../results/plot_1.png', dpi=300)
+
+
+    except Exception as e:
+        logger.error('generatePlot failed because of {}'.format(e))
 
     return
 
@@ -127,9 +185,19 @@ def main(logger, resultsDict):
     x = np.array(x).reshape((-1,1))
     y = np.load(linRegression_config["params"]["y"])
 
-    #printData(x,y)
+    fittedModel = fitModel(x,y)
 
-    fitModel(x,y)
+    generatePlot(x, y, fittedModel)
+
+    results = {
+        'x-median': 20,
+        'y-median': 20,
+    }
+    generateReport( results)
+
+    user = ('CenterPointe', '18425')
+    data = getUserMSE(user)
+    print(data)
 
     print('Getting out of linRegression module')
     print('-'*30)

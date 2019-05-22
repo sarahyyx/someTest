@@ -10,8 +10,8 @@
         "moduleName" : "linRegression  ",
         "path"       : "modules/linRegression/linRegression.py",
         "execute"    : true,
-        "description": "",
-        "owner"      : ""
+        "description": "A linear regression model that takes in x and y data and obtains a line",
+        "owner"      : "Sarah"
     },
     {
         "moduleName" : "celeryCheck",
