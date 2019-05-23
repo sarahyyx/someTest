@@ -83,7 +83,7 @@ def createDF(logger):
         queryData = '''
         SELECT * 
         FROM raw_data.background 
-        LIMIT 10;
+        LIMIT 100;
         '''
 
         queryColumnNames = '''
@@ -106,6 +106,22 @@ def createDF(logger):
         logger.error(f'Unable to get data for number of users: {e}')
 
     return df 
+
+@lD.log(logBase + '.createSigDF')
+def createSigDF(logger, df):
+
+    try:
+
+        print("this is the start of the createSigDF function")
+        
+        totalRows = df.shape[0]
+        maxNumOfNaNs = 0.2*totalRows
+        df = df.loc[:,(df.isnull().sum(axis=0)<= maxNumOfNaNs)]
+
+    except Exception as e:
+        logger.error(f'Unable to get data for number of users: {e}')
+
+    return df
 
 
 @lD.log(logBase + '.generatePlot')
@@ -174,8 +190,12 @@ def main(logger, resultsDict):
         'numericalColumns': [],
     }
 
-    entireTable = createDF()
-    print(entireTable)
+    allData = createDF()
+    
+    # Run this only on the first time to create the .csv file with allData
+    allData.to_csv(path_or_buf='/home/sarah/Documents/programs/someTest/data/raw_data/allData.csv', index=False)
+
+    sigData = createSigDF(allData)
 
     #generateReport(tableInfo)
 
