@@ -9,9 +9,16 @@
     {
         "moduleName" : "linRegression  ",
         "path"       : "modules/linRegression/linRegression.py",
+        "execute"    : false,
+        "description": "A linear regression model that takes in x and y data and obtains a line of best fit",
+        "owner"      : ""
+    },
+    {
+        "moduleName" : "dbSummary  ",
+        "path"       : "modules/linRegression/dbSummary.py",
         "execute"    : true,
-        "description": "A linear regression model that takes in x and y data and obtains a line",
-        "owner"      : "Sarah"
+        "description": "",
+        "owner"      : ""
     },
     {
         "moduleName" : "celeryCheck",

@@ -2,13 +2,12 @@ from logs import logDecorator as lD
 import jsonref, pprint
 import numpy as np 
 import matplotlib.pyplot as plt
-from sklearn.linear_model import LinearRegression
 
 from lib.databaseIO import pgIO
 
 config = jsonref.load(open('../config/config.json'))
-linRegression_config = jsonref.load(open('../config/modules/linRegression.json'))
-logBase = config['logging']['logBase'] + '.modules.linRegression.linRegression'
+dbSummary_config = jsonref.load(open('../config/modules/dbSummary.json'))
+logBase = config['logging']['logBase'] + '.modules.dbSummary.dbSummary'
 
 
 @lD.log(logBase + '.doSomething')
@@ -87,33 +86,6 @@ def getUserMSE(logger, user):
 
     return data 
 
-
-@lD.log(logBase + '.fitModel')
-def fitModel(logger, x, y):
-    '''print a line
-    
-    This function simply prints a single line
-    
-    Parameters
-    ----------
-    logger : {logging.Logger}
-        The logger used for logging error information
-    '''
-
-    try:
-        print('We are in fitModel function')
-
-        model = LinearRegression()
-        model.fit(x,y)
-
-        print("intercept: ", model.intercept_)
-        print("slope: ", model.coef_)
-
-
-    except Exception as e:
-        logger.error('fitModel failed because of {}'.format(e))
-
-    return model
 
 @lD.log(logBase + '.generatePlot')
 def generatePlot(logger, x, y, m):
