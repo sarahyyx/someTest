@@ -193,7 +193,7 @@ def main(logger, resultsDict):
         'x-median': 20,
         'y-median': 20,
     }
-    generateReport( results)
+    generateReport(results)
 
     user = ('CenterPointe', '18425')
     data = getUserMSE(user)

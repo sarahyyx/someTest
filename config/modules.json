@@ -15,7 +15,7 @@
     },
     {
         "moduleName" : "dbSummary  ",
-        "path"       : "modules/linRegression/dbSummary.py",
+        "path"       : "modules/dbSummary/dbSummary.py",
         "execute"    : true,
         "description": "",
         "owner"      : ""
