@@ -14,27 +14,6 @@ config = jsonref.load(open('../config/config.json'))
 dbSummary_config = jsonref.load(open('../config/modules/dbSummary.json'))
 logBase = config['logging']['logBase'] + '.modules.dbSummary.dbSummary'
 
-
-@lD.log(logBase + '.doSomething')
-def doSomething(logger, inputDict):
-    '''print a line
-    
-    This function simply prints a single line
-    
-    Parameters
-    ----------
-    logger : {logging.Logger}
-        The logger used for logging error information
-    '''
-
-    try:
-        print('We are in test function')
-
-    except Exception as e:
-        logger.error('doSomething failed because of {}'.format(e))
-
-    return 
-
 @lD.log(logBase + '.generateReport')
 def generateReport(logger, r):
     
@@ -149,25 +128,6 @@ def getColumnMean(logger, columnNames):
 
     return columnData
 
-# @lD.log(logBase + '.getSigCols')
-# def getSigCols(logger, columnNames):
-
-#     try:
-
-#         queryColumnNullCount = '''
-#         SELECT COUNT(%s)
-#         FROM raw_data.background
-#         '''
-
-#         columnNullCount = []
-#         for tuple in pgIO.getAllData(queryColumnNullCount, values=columnNames):
-#             columnNullCount.append(tuple[0])
-
-#     except Exception as e:
-#         logger.error(f'Unable to get data for the column names: {e}')
-
-#     return columnNullCount 
-
 @lD.log(logBase + '.generatePlot')
 def generatePlot(logger, x, y, m):
     '''print a line
@@ -223,12 +183,8 @@ def main(logger, resultsDict):
     print('='*30)
     print('Main function of dbSummary module')
     print('='*30)
-    # print('We get a copy of the result dictionary over here ...')
-    # pprint.pprint(resultsDict)
 
-
-
-    for col, n in zip(['marital', 'id'], [10, 20]):
+    for col, n in zip(['marital', 'id'], [10, 20]): #create config file with column names
 
         query = SQL('''
             SELECT 
