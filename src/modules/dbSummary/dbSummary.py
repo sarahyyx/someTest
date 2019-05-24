@@ -4,7 +4,11 @@ import numpy as np
 import pandas as pd 
 import matplotlib.pyplot as plt
 
+from psycopg2.sql import SQL, Identifier, Literal
+
 from lib.databaseIO import pgIO
+
+from modules.dbSummary import utils
 
 config = jsonref.load(open('../config/config.json'))
 dbSummary_config = jsonref.load(open('../config/modules/dbSummary.json'))
@@ -76,15 +80,39 @@ def getUserMSE(logger, user):
 
     return data 
 
-@lD.log(logBase + '.createDF')
-def createDF(logger):
+@lD.log(logBase + '.getNumRowsCol')
+def getNumRowsCol(logger):
 
     try:
-        queryData = '''
-        SELECT * 
-        FROM raw_data.background 
-        LIMIT 100;
+
+        queryNumColumn = '''
+        SELECT COUNT (*) column_name 
+        FROM information_schema.columns 
+        WHERE table_schema = 'raw_data'
+        AND table_name =  'background'
         '''
+
+        queryNumRows = '''
+        SELECT COUNT (*)
+        FROM raw_data.background
+        '''
+
+        #extracting the column name elements from the tuple
+        numRowsCol = []
+        for tuple in pgIO.getAllData(queryNumRows):
+            numRowsCol.append(tuple[0])
+        for tuple in pgIO.getAllData(queryNumColumn):
+            numRowsCol.append(tuple[0])
+
+    except Exception as e:
+        logger.error(f'Unable to get data: {e}')
+
+    return numRowsCol 
+
+@lD.log(logBase + '.getColumnNames')
+def getColumnNames(logger):
+
+    try:
 
         queryColumnNames = '''
         SELECT column_name 
@@ -98,31 +126,47 @@ def createDF(logger):
         for tuple in pgIO.getAllData(queryColumnNames):
             columnNames.append(tuple[0])
 
-        #creating the dataframe
-        df = pd.DataFrame(pgIO.getAllData(queryData), columns=columnNames)
-
 
     except Exception as e:
-        logger.error(f'Unable to get data for number of users: {e}')
+        logger.error(f'Unable to get data for the column names: {e}')
 
-    return df 
+    return columnNames 
 
-@lD.log(logBase + '.createSigDF')
-def createSigDF(logger, df):
+@lD.log(logBase + '.getColumnMean')
+def getColumnMean(logger, columnNames):
 
     try:
 
-        print("this is the start of the createSigDF function")
-        
-        totalRows = df.shape[0]
-        maxNumOfNaNs = 0.2*totalRows
-        df = df.loc[:,(df.isnull().sum(axis=0)<= maxNumOfNaNs)]
+        queryColumnData = '''
+        SELECT %s
+        FROM raw_data.background
+        '''
+
+        columnData = pgIO.getAllData(queryColumnData, values=columnNames)
 
     except Exception as e:
-        logger.error(f'Unable to get data for number of users: {e}')
+        logger.error(f'Unable to get data for the column names: {e}')
 
-    return df
+    return columnData
 
+# @lD.log(logBase + '.getSigCols')
+# def getSigCols(logger, columnNames):
+
+#     try:
+
+#         queryColumnNullCount = '''
+#         SELECT COUNT(%s)
+#         FROM raw_data.background
+#         '''
+
+#         columnNullCount = []
+#         for tuple in pgIO.getAllData(queryColumnNullCount, values=columnNames):
+#             columnNullCount.append(tuple[0])
+
+#     except Exception as e:
+#         logger.error(f'Unable to get data for the column names: {e}')
+
+#     return columnNullCount 
 
 @lD.log(logBase + '.generatePlot')
 def generatePlot(logger, x, y, m):
@@ -182,20 +226,50 @@ def main(logger, resultsDict):
     # print('We get a copy of the result dictionary over here ...')
     # pprint.pprint(resultsDict)
 
-    tableInfo = {
-        'totalNumUser': None,
-        'totalNumColumns': None,
-        'columnNames': [],
-        'categoricalColumns': [],
-        'numericalColumns': [],
-    }
 
-    allData = createDF()
-    
-    # Run this only on the first time to create the .csv file with allData
-    allData.to_csv(path_or_buf='/home/sarah/Documents/programs/someTest/data/raw_data/allData.csv', index=False)
 
-    sigData = createSigDF(allData)
+    for col, n in zip(['marital', 'id'], [10, 20]):
+
+        query = SQL('''
+            SELECT 
+                {} 
+            from 
+                {}.{}
+            limit {}
+            ''').format(
+                Identifier(col),
+                Identifier('raw_data'),
+                Identifier('background'),
+                Literal(n)
+            )
+
+        data = [d[0] for d in pgIO.getAllData(query)]
+        print(data)
+
+    # maritalDist = utils.getMaritalDist()
+    # maritalDist = utils.getMaritalDistParallel()
+    # print(maritalDist)
+
+    # tableInfo = {
+    #     'totalNumUser': None,
+    #     'totalNumColumns': None,
+    #     'columns': {
+    #                 'names': None,
+    #                 'type': None,
+    #                 'numEntries': None,
+    #                 'means': None,
+    #                 'mins': None,
+    #                 'maxs': None,
+    #                 },
+    # }
+
+    # tableInfo['columns']['names'] = getColumnNames()
+    # tableInfo['totalNumUser'] = getNumRowsCol()[0]
+    # tableInfo['totalNumColumns'] = getNumRowsCol()[1]
+
+    # print(tableInfo)
+
+    # print(getColumnMean())
 
     #generateReport(tableInfo)
 
