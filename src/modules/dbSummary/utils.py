@@ -4,6 +4,7 @@ import numpy as np
 import pandas as pd 
 import matplotlib.pyplot as plt
 
+from psycopg2.sql import SQL, Identifier, Literal
 from lib.databaseIO import pgIO
 from collections import Counter
 
@@ -28,6 +29,7 @@ def getMaritalDistPP(logger, data):
 
     return
 
+#parallel processing, used in conjunction with above
 @lD.log(logBase + '.getMaritalDistParallel')
 def getMaritalDistParallel(logger):
 
@@ -55,6 +57,52 @@ def getMaritalDistParallel(logger):
 
     return result
 
+@lD.log(logBase + '.getColDistPP')
+def getColDistPP(logger, data):
+    
+    try:
+        data = [d[0] for d in data]
+        c = Counter(data)
+        return c
+    except Exception as e:
+        logger.error(f'{e}')
+        return Counter([])
+
+    return
+
+#parallel processing, used in conjunction with above
+@lD.log(logBase + '.getColDistParallel')
+def getColDistParallel(logger, column):
+
+    p = Pool()
+    
+    result = Counter([])
+    try:
+        query = SQL('''
+        SELECT 
+            {} 
+        FROM 
+            raw_data.background
+        ''').format(
+            Identifier(column)
+        )
+
+        dataIter = pgIO.getDataIterator(query, chunks= 1000)
+        
+        for c in tqdm(p.imap(getMaritalDistPP, dataIter), total=501):
+            result.update(c)
+
+        return result
+
+    except Exception as e:
+        logger.error(f'Unable to generate result: {e}')
+
+
+    p.close()
+
+    return result
+
+
 @lD.log(logBase + '.getMaritalDist')
 def getMaritalDist(logger):
 
@@ -74,7 +122,5 @@ def getMaritalDist(logger):
 
     except Exception as e:
         logger.error(f'Unable to generate result: {e}')
-
-
 
     return result

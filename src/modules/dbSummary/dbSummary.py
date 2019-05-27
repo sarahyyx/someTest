@@ -3,6 +3,7 @@ import jsonref, pprint
 import numpy as np 
 import pandas as pd 
 import matplotlib.pyplot as plt
+from tqdm import tqdm
 
 from psycopg2.sql import SQL, Identifier, Literal
 
@@ -111,8 +112,8 @@ def getColumnNames(logger):
 
     return columnNames 
 
-@lD.log(logBase + '.getColumnMean')
-def getColumnMean(logger, columnNames):
+@lD.log(logBase + '.getColumnInfo')
+def getColumnMean(logger, column):
 
     try:
 
@@ -128,39 +129,6 @@ def getColumnMean(logger, columnNames):
 
     return columnData
 
-@lD.log(logBase + '.generatePlot')
-def generatePlot(logger, x, y, m):
-    '''print a line
-    
-    This function simply prints a single line
-    
-    Parameters
-    ----------
-    logger : {logging.Logger}
-        The logger used for logging error information
-    '''
-
-    try:
-        print('We are in generatePlot function')
-
-        fig = plt.figure(figsize=(4,3))
-        ax = plt.axes([0.15, 0.22, 0.84, 0.77])
-        ax.plot(x,y, "s", mfc='None', mec='black', alpha=0.4)
-        # plt.title("LinReg Test")
-
-        y_pred = m.predict(x)
-        ax.plot(x, y_pred, color='black', lw=2)
-
-        plt.xlabel(r'$x$')
-        plt.ylabel(r'$y$')
-
-        plt.savefig('../results/plot_1.png', dpi=300)
-
-
-    except Exception as e:
-        logger.error('generatePlot failed because of {}'.format(e))
-
-    return
 
 @lD.log(logBase + '.main')
 def main(logger, resultsDict):
@@ -184,51 +152,45 @@ def main(logger, resultsDict):
     print('Main function of dbSummary module')
     print('='*30)
 
-    for col, n in zip(['marital', 'id'], [10, 20]): #create config file with column names
+    # for col, n in zip(['marital', 'id'], [10, 20]): #create config file with column names
 
-        query = SQL('''
-            SELECT 
-                {} 
-            from 
-                {}.{}
-            limit {}
-            ''').format(
-                Identifier(col),
-                Identifier('raw_data'),
-                Identifier('background'),
-                Literal(n)
-            )
+    #     query = SQL('''
+    #         SELECT 
+    #             {} 
+    #         from 
+    #             {}.{}
+    #         limit {}
+    #         ''').format(
+    #             Identifier(col),
+    #             Identifier('raw_data'),
+    #             Identifier('background'),
+    #             Literal(n)
+    #         )
 
-        data = [d[0] for d in pgIO.getAllData(query)]
-        print(data)
+    #     data = [d[0] for d in pgIO.getAllData(query)]
+    #     print(data)
 
-    # maritalDist = utils.getMaritalDist()
     # maritalDist = utils.getMaritalDistParallel()
     # print(maritalDist)
+    
+    tableInfo = {
+        'totalNumUser': None,
+        'totalNumColumns': None,
+        'columnNames': None,
+    }
 
-    # tableInfo = {
-    #     'totalNumUser': None,
-    #     'totalNumColumns': None,
-    #     'columns': {
-    #                 'names': None,
-    #                 'type': None,
-    #                 'numEntries': None,
-    #                 'means': None,
-    #                 'mins': None,
-    #                 'maxs': None,
-    #                 },
-    # }
+    tableInfo['columnNames'] = getColumnNames()
+    tableInfo['totalNumUser'] = getNumRowsCol()[0]
+    tableInfo['totalNumColumns'] = getNumRowsCol()[1]
 
-    # tableInfo['columns']['names'] = getColumnNames()
-    # tableInfo['totalNumUser'] = getNumRowsCol()[0]
-    # tableInfo['totalNumColumns'] = getNumRowsCol()[1]
+    #create a columnInfo dictionary with keys as the column name and values as the counts
+    columnInfo = {key: None for key in tableInfo['columnNames']}
 
-    # print(tableInfo)
+    #iterate through column names 
+    for column in tqdm(columnInfo, total=getNumRowsCol()[1]):
+        columnInfo[column] = dict(utils.getColDistParallel(column))
 
-    # print(getColumnMean())
-
-    #generateReport(tableInfo)
-
+    # generateReport(tableInfo)
 
     print('Getting out of dbSummary module')
     print('-'*30)
