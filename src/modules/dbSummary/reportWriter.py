@@ -27,12 +27,34 @@ This report will give a summary of the target table: raw_data.background of the 
 
 This table has information on {r['totalNumUser']} users, with {r['totalNumColumns']} attribute columns. 
 
-These columns are {r['columnNames']}.
+These columns are:
+
+        '''
+    f.append('''
+## Description of Table:
+        ''')
+    with open('../report/summariserReport.md', 'w+') as f:
+        f.write( report )
+
+    return
+
+@lD.log(logBase + '.generateColNames')
+def generateColNames(logger, r):
+
+    for columnName in r:
+            report = f'''
+
+{r['columnNames']}
+
+|No.| Column Name |
+|1|-------------|
+|2|$x$         |
+|3|$y$         |
 
 ## Description of Table:
         '''
 
-    with open('../report/summariserReport.md', 'w+') as f:
+    with open('../report/summariserReport.md', 'a+') as f:
         f.write( report )
 
     return
@@ -42,11 +64,11 @@ def generateBody(logger, r):
 
     for columnName in r:
         report = f'''
-    The top 10 most commonly occurring values of the column {columnName} is: \n{r[columnName]}.
+The top 10 most commonly occurring values of the column {columnName} is: \n{r[columnName]}.
         '''
 
-        with open('../report/summariserReport.md', 'a+') as f:
-            f.write( report )
+    with open('../report/summariserReport.md', 'a+') as f:
+        f.write( report )
 
     return
 
