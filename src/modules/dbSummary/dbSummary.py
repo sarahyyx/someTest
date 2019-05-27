@@ -1,47 +1,23 @@
 from logs import logDecorator as lD 
 import jsonref, pprint
+import json
 import numpy as np 
 import pandas as pd 
 import matplotlib.pyplot as plt
 from tqdm import tqdm
+import operator
 
 from psycopg2.sql import SQL, Identifier, Literal
 
 from lib.databaseIO import pgIO
 
 from modules.dbSummary import utils
+from modules.dbSummary import reportWriter
 
 config = jsonref.load(open('../config/config.json'))
 dbSummary_config = jsonref.load(open('../config/modules/dbSummary.json'))
 logBase = config['logging']['logBase'] + '.modules.dbSummary.dbSummary'
 
-@lD.log(logBase + '.generateReport')
-def generateReport(logger, r):
-    
-    report = f'''
-
-# Table Summary
-
-# Abstract: 
-This report will give a summary of the target table: raw_data.background of the MindLinc database.
-
-# Summary Results
-
-This table has information on {r['totalNumUser']} users, 
-with {r['totalNumColumns']} attribute columns. These columns are {r['columnNames']}.
-
-
-| variable | median | mean | std |
-|----------|--------|------|-----|
-| $x$      | {r['totalNumUser']} | 25 | 1 |
-| $y$      | {r['totalNumUser']} | 25 | 1 |
-
-        '''
-
-    with open('../report/report2.md', 'w') as f:
-        f.write( report )
-
-    return
 
 @lD.log(logBase + '.getUserMSE')
 def getUserMSE(logger, user):
@@ -112,23 +88,17 @@ def getColumnNames(logger):
 
     return columnNames 
 
-@lD.log(logBase + '.getColumnInfo')
-def getColumnMean(logger, column):
+@lD.log(logBase + '.getTopValuesCol')
+def getTopValuesCol(logger, d, top_d):
 
     try:
-
-        queryColumnData = '''
-        SELECT %s
-        FROM raw_data.background
-        '''
-
-        columnData = pgIO.getAllData(queryColumnData, values=columnNames)
+        for column in d:
+            top_d[column] = dict(sorted(d[column].items(), key=operator.itemgetter(1), reverse=True)[:dbSummary_config["params"]["top_number"]])
 
     except Exception as e:
         logger.error(f'Unable to get data for the column names: {e}')
 
-    return columnData
-
+    return top_d 
 
 @lD.log(logBase + '.main')
 def main(logger, resultsDict):
@@ -152,27 +122,6 @@ def main(logger, resultsDict):
     print('Main function of dbSummary module')
     print('='*30)
 
-    # for col, n in zip(['marital', 'id'], [10, 20]): #create config file with column names
-
-    #     query = SQL('''
-    #         SELECT 
-    #             {} 
-    #         from 
-    #             {}.{}
-    #         limit {}
-    #         ''').format(
-    #             Identifier(col),
-    #             Identifier('raw_data'),
-    #             Identifier('background'),
-    #             Literal(n)
-    #         )
-
-    #     data = [d[0] for d in pgIO.getAllData(query)]
-    #     print(data)
-
-    # maritalDist = utils.getMaritalDistParallel()
-    # print(maritalDist)
-    
     tableInfo = {
         'totalNumUser': None,
         'totalNumColumns': None,
@@ -183,14 +132,31 @@ def main(logger, resultsDict):
     tableInfo['totalNumUser'] = getNumRowsCol()[0]
     tableInfo['totalNumColumns'] = getNumRowsCol()[1]
 
-    #create a columnInfo dictionary with keys as the column name and values as the counts
-    columnInfo = {key: None for key in tableInfo['columnNames']}
+    # #create a columnInfo dictionary with keys as the column name and values as the counts
+    # columnInfo = {key: None for key in tableInfo['columnNames']}
+    topValuesColumns = {key: None for key in tableInfo['columnNames']}
 
-    #iterate through column names 
-    for column in tqdm(columnInfo, total=getNumRowsCol()[1]):
-        columnInfo[column] = dict(utils.getColDistParallel(column))
+    # #populating the columnInfo dictionary with column counts 
+    # for column in tqdm(columnInfo, total=getNumRowsCol()[1]):
+    #     columnInfo[column] = dict(utils.getColDistParallel(column))
 
-    # generateReport(tableInfo)
+    # #save both dictionaries to the data/final folder, run only on first try
+    # with open('/home/sarah/Documents/programs/someTest/data/final/tableInfo.json', 'w') as f:
+    #     json.dump(tableInfo, f)
+    # f.close()
+
+    # with open('/home/sarah/Documents/programs/someTest/data/final/columnInfo.json', 'w') as f:
+    #     json.dump(columnInfo, f)
+    # f.close()
+
+    #reading from final data json file instead of populating the dict again
+    columnInfo = jsonref.load(open('../data/final/columnInfo.json'))
+    
+    topValuesColumns = getTopValuesCol(columnInfo, topValuesColumns)
+
+    reportWriter.generateIntro(tableInfo)
+
+    reportWriter.generateBody(topValuesColumns)
 
     print('Getting out of dbSummary module')
     print('-'*30)
