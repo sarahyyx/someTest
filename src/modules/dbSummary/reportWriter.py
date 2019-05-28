@@ -69,6 +69,11 @@ The top 10 most commonly occurring values of the column {columnName} is:
             report =  report + f'''
 |{value}        |{r[columnName][value]}|'''
 
+        report = report + f'''
+![](../results/AttributeValueCounts/{columnName}.png)
+***
+'''
+
     with open('../report/summariserReport.md', 'a+') as f:
         f.write( report )
 

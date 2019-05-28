@@ -57,23 +57,38 @@ The top 10 most commonly occurring values of the column secondarylanguage is:
 |none        |30|
 |None        |29|
 |ITALIAN        |22|
+![](../results/AttributeValueCounts/secondarylanguage.png)
+***
+
 The top 10 most commonly occurring values of the column c_meds is:
 |Attribute Value|Value Count|
 |---------------|-----------|
 |null        |371166|
 |yes        |129972|
+![](../results/AttributeValueCounts/c_meds.png)
+***
+
 The top 10 most commonly occurring values of the column grade is:
 |Attribute Value|Value Count|
 |---------------|-----------|
 |null        |501138|
+![](../results/AttributeValueCounts/grade.png)
+***
+
 The top 10 most commonly occurring values of the column consent is:
 |Attribute Value|Value Count|
 |---------------|-----------|
 |null        |501138|
+![](../results/AttributeValueCounts/consent.png)
+***
+
 The top 10 most commonly occurring values of the column billofrights is:
 |Attribute Value|Value Count|
 |---------------|-----------|
 |null        |501138|
+![](../results/AttributeValueCounts/billofrights.png)
+***
+
 The top 10 most commonly occurring values of the column marital is:
 |Attribute Value|Value Count|
 |---------------|-----------|
@@ -87,6 +102,9 @@ The top 10 most commonly occurring values of the column marital is:
 |N        |15689|
 |Separated        |11311|
 |Widowed        |7948|
+![](../results/AttributeValueCounts/marital.png)
+***
+
 The top 10 most commonly occurring values of the column resource_ is:
 |Attribute Value|Value Count|
 |---------------|-----------|
@@ -100,6 +118,9 @@ The top 10 most commonly occurring values of the column resource_ is:
 |0        |17|
 |disability        |16|
 |unemployment        |14|
+![](../results/AttributeValueCounts/resource_.png)
+***
+
 The top 10 most commonly occurring values of the column inactive is:
 |Attribute Value|Value Count|
 |---------------|-----------|
@@ -113,6 +134,9 @@ The top 10 most commonly occurring values of the column inactive is:
 |ACtive        |3|
 |inactive        |3|
 |lock        |2|
+![](../results/AttributeValueCounts/inactive.png)
+***
+
 The top 10 most commonly occurring values of the column coccupation is:
 |Attribute Value|Value Count|
 |---------------|-----------|
@@ -126,6 +150,9 @@ The top 10 most commonly occurring values of the column coccupation is:
 |Unemployed Not seeking work        |2853|
 |Laborer        |2290|
 |Unemployed seeking work in last 30 days        |2076|
+![](../results/AttributeValueCounts/coccupation.png)
+***
+
 The top 10 most commonly occurring values of the column education is:
 |Attribute Value|Value Count|
 |---------------|-----------|
@@ -139,6 +166,9 @@ The top 10 most commonly occurring values of the column education is:
 |College Degree        |4406|
 |< 7 years schooling        |4032|
 |10th Grade Completed        |3320|
+![](../results/AttributeValueCounts/education.png)
+***
+
 The top 10 most commonly occurring values of the column id is:
 |Attribute Value|Value Count|
 |---------------|-----------|
@@ -152,6 +182,9 @@ The top 10 most commonly occurring values of the column id is:
 |62        |25|
 |156        |25|
 |54        |25|
+![](../results/AttributeValueCounts/id.png)
+***
+
 The top 10 most commonly occurring values of the column ethnicity is:
 |Attribute Value|Value Count|
 |---------------|-----------|
@@ -165,16 +198,25 @@ The top 10 most commonly occurring values of the column ethnicity is:
 |Hispanic or Latino        |14507|
 |Not of Hispanic origin        |13923|
 |N^NEITHER HISP OR LATI        |11338|
+![](../results/AttributeValueCounts/ethnicity.png)
+***
+
 The top 10 most commonly occurring values of the column specialed is:
 |Attribute Value|Value Count|
 |---------------|-----------|
 |null        |501138|
+![](../results/AttributeValueCounts/specialed.png)
+***
+
 The top 10 most commonly occurring values of the column noticeofpriv is:
 |Attribute Value|Value Count|
 |---------------|-----------|
 |null        |499735|
 |true        |1090|
 |false        |313|
+![](../results/AttributeValueCounts/noticeofpriv.png)
+***
+
 The top 10 most commonly occurring values of the column zipcode is:
 |Attribute Value|Value Count|
 |---------------|-----------|
@@ -188,6 +230,9 @@ The top 10 most commonly occurring values of the column zipcode is:
 |275        |18908|
 |471        |17567|
 |null        |17293|
+![](../results/AttributeValueCounts/zipcode.png)
+***
+
 The top 10 most commonly occurring values of the column religion is:
 |Attribute Value|Value Count|
 |---------------|-----------|
@@ -201,6 +246,9 @@ The top 10 most commonly occurring values of the column religion is:
 |Non-Denominational        |11381|
 |Roman Catholic        |8227|
 |CHO        |5372|
+![](../results/AttributeValueCounts/religion.png)
+***
+
 The top 10 most commonly occurring values of the column income is:
 |Attribute Value|Value Count|
 |---------------|-----------|
@@ -214,6 +262,9 @@ The top 10 most commonly occurring values of the column income is:
 |9600        |1932|
 |2000        |1917|
 |12000        |1900|
+![](../results/AttributeValueCounts/income.png)
+***
+
 The top 10 most commonly occurring values of the column primarylanguage is:
 |Attribute Value|Value Count|
 |---------------|-----------|
@@ -227,14 +278,23 @@ The top 10 most commonly occurring values of the column primarylanguage is:
 |ENG        |3379|
 |EN        |2417|
 |Spanish; Castilian        |643|
+![](../results/AttributeValueCounts/primarylanguage.png)
+***
+
 The top 10 most commonly occurring values of the column fin is:
 |Attribute Value|Value Count|
 |---------------|-----------|
 |null        |501138|
+![](../results/AttributeValueCounts/fin.png)
+***
+
 The top 10 most commonly occurring values of the column advancedirective is:
 |Attribute Value|Value Count|
 |---------------|-----------|
 |null        |501138|
+![](../results/AttributeValueCounts/advancedirective.png)
+***
+
 The top 10 most commonly occurring values of the column rreason is:
 |Attribute Value|Value Count|
 |---------------|-----------|
@@ -248,6 +308,9 @@ The top 10 most commonly occurring values of the column rreason is:
 |SPARCS GROUP        |89|
 |-3        |83|
 |-2        |74|
+![](../results/AttributeValueCounts/rreason.png)
+***
+
 The top 10 most commonly occurring values of the column emplystatus is:
 |Attribute Value|Value Count|
 |---------------|-----------|
@@ -261,6 +324,9 @@ The top 10 most commonly occurring values of the column emplystatus is:
 |-4        |1|
 |-9        |1|
 |-18        |1|
+![](../results/AttributeValueCounts/emplystatus.png)
+***
+
 The top 10 most commonly occurring values of the column student is:
 |Attribute Value|Value Count|
 |---------------|-----------|
@@ -274,6 +340,9 @@ The top 10 most commonly occurring values of the column student is:
 |> $ 200,000        |1|
 |14400        |1|
 |50000        |1|
+![](../results/AttributeValueCounts/student.png)
+***
+
 The top 10 most commonly occurring values of the column sex is:
 |Attribute Value|Value Count|
 |---------------|-----------|
@@ -287,6 +356,9 @@ The top 10 most commonly occurring values of the column sex is:
 |X        |10|
 |T        |5|
 |Q        |4|
+![](../results/AttributeValueCounts/sex.png)
+***
+
 The top 10 most commonly occurring values of the column race is:
 |Attribute Value|Value Count|
 |---------------|-----------|
@@ -300,6 +372,9 @@ The top 10 most commonly occurring values of the column race is:
 |Black or African  American        |8086|
 |BlackAfricanAmerican        |6945|
 |Unknown        |6404|
+![](../results/AttributeValueCounts/race.png)
+***
+
 The top 10 most commonly occurring values of the column siteid is:
 |Attribute Value|Value Count|
 |---------------|-----------|
@@ -313,6 +388,9 @@ The top 10 most commonly occurring values of the column siteid is:
 |CenterPointe        |27386|
 |LifeSpring        |20106|
 |HorizonsCVCS        |15923|
+![](../results/AttributeValueCounts/siteid.png)
+***
+
 The top 10 most commonly occurring values of the column hoccupation is:
 |Attribute Value|Value Count|
 |---------------|-----------|
@@ -326,6 +404,9 @@ The top 10 most commonly occurring values of the column hoccupation is:
 |Not in Labor Force: Other        |1103|
 |Clerical worker        |1071|
 |Other Occupation        |866|
+![](../results/AttributeValueCounts/hoccupation.png)
+***
+
 The top 10 most commonly occurring values of the column dependents is:
 |Attribute Value|Value Count|
 |---------------|-----------|
@@ -339,6 +420,9 @@ The top 10 most commonly occurring values of the column dependents is:
 |6        |1870|
 |7        |733|
 |01        |570|
+![](../results/AttributeValueCounts/dependents.png)
+***
+
 The top 10 most commonly occurring values of the column certified_visits is:
 |Attribute Value|Value Count|
 |---------------|-----------|
@@ -352,3 +436,5 @@ The top 10 most commonly occurring values of the column certified_visits is:
 |-7        |11450|
 |-8        |9952|
 |-9        |8674|
+![](../results/AttributeValueCounts/certified_visits.png)
+***

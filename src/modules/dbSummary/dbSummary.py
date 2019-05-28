@@ -154,6 +154,11 @@ def main(logger, resultsDict):
     
     topValuesColumns = getTopValuesCol(columnInfo, topValuesColumns)
 
+    print("Plotting graphs...")
+    for columnName in tqdm(tableInfo['columnNames']):
+        utils.plotCountGraph(columnName, list(topValuesColumns[columnName].keys()), list(topValuesColumns[columnName].values()))
+    print("--- Finished plotting ----")
+
     reportWriter.generateIntro(tableInfo)
 
     reportWriter.generateColNames(tableInfo)

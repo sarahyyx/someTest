@@ -7,6 +7,7 @@ import matplotlib.pyplot as plt
 from psycopg2.sql import SQL, Identifier, Literal
 from lib.databaseIO import pgIO
 from collections import Counter
+from textwrap import wrap
 
 from tqdm import tqdm
 from multiprocessing import Pool
@@ -124,6 +125,26 @@ def getColDistParallel(logger, column):
 
     return result
 
+@lD.log(logBase + '.plotCountGraph')
+def plotCountGraph(logger, attribute, valueList, countList):
+    
+    try:       
+        y_pos = np.arange(len(valueList))
+        valueList = [ '\n'.join(wrap(v, 5)) for v in valueList ]
+
+        plt.bar(y_pos, countList, align='center', alpha=0.5, color='black')
+        plt.xticks(y_pos, valueList)
+        plt.ylabel('Value Count')
+        plt.title(attribute)
+        plt.tight_layout()
+
+        plt.savefig(f'../results/AttributeValueCounts/{attribute}.png', dpi=300)
+        plt.close()
+
+    except Exception as e:
+        logger.error(f'{e}')
+
+    return
 
 @lD.log(logBase + '.getMaritalDist')
 def getMaritalDist(logger):
