@@ -27,12 +27,9 @@ This report will give a summary of the target table: raw_data.background of the 
 
 This table has information on {r['totalNumUser']} users, with {r['totalNumColumns']} attribute columns. 
 
-These columns are:
+## Description of Table:
 
         '''
-    f.append('''
-## Description of Table:
-        ''')
     with open('../report/summariserReport.md', 'w+') as f:
         f.write( report )
 
@@ -41,31 +38,36 @@ These columns are:
 @lD.log(logBase + '.generateColNames')
 def generateColNames(logger, r):
 
-    for columnName in r:
-            report = f'''
+    report = f'''
+|No.| Attribute   |
+|---|-------------|'''
 
-{r['columnNames']}
-
-|No.| Column Name |
-|1|-------------|
-|2|$x$         |
-|3|$y$         |
-
-## Description of Table:
-        '''
+    i = 1
+    for columnName in r['columnNames']:
+        report = report + f'''
+|{i}|{columnName} |'''
+        i = i+1
 
     with open('../report/summariserReport.md', 'a+') as f:
         f.write( report )
 
     return
 
-@lD.log(logBase + '.generateBody')
-def generateBody(logger, r):
+@lD.log(logBase + '.generateTop')
+def generateTop(logger, r):
+
+    report = f'''
+### Top values for each attribute sorted in descending order'''
 
     for columnName in r:
-        report = f'''
-The top 10 most commonly occurring values of the column {columnName} is: \n{r[columnName]}.
-        '''
+        report =  report + f'''
+The top 10 most commonly occurring values of the column {columnName} is:
+|Attribute Value|Value Count|
+|---------------|-----------|'''
+
+        for value in r[columnName]:
+            report =  report + f'''
+|{value}        |{r[columnName][value]}|'''
 
     with open('../report/summariserReport.md', 'a+') as f:
         f.write( report )

@@ -21,7 +21,7 @@ logBase = config['logging']['logBase'] + '.modules.dbSummary.dbSummary'
 
 @lD.log(logBase + '.getUserMSE')
 def getUserMSE(logger, user):
-
+  
     data = []
 
     try:
@@ -156,7 +156,9 @@ def main(logger, resultsDict):
 
     reportWriter.generateIntro(tableInfo)
 
-    reportWriter.generateBody(topValuesColumns)
+    reportWriter.generateColNames(tableInfo)
+
+    reportWriter.generateTop(topValuesColumns)
 
     print('Getting out of dbSummary module')
     print('-'*30)
