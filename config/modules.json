@@ -7,15 +7,22 @@
         "owner"      : ""
     }, 
     {
-        "moduleName" : "linRegression  ",
+        "moduleName" : "linRegression",
         "path"       : "modules/linRegression/linRegression.py",
         "execute"    : false,
         "description": "A linear regression model that takes in x and y data and obtains a line of best fit",
         "owner"      : ""
     },
     {
-        "moduleName" : "dbSummary  ",
+        "moduleName" : "dbSummary",
         "path"       : "modules/dbSummary/dbSummary.py",
+        "execute"    : false,
+        "description": "",
+        "owner"      : ""
+    },
+    {
+        "moduleName" : "paper1",
+        "path"       : "modules/paper1/paper1.py",
         "execute"    : true,
         "description": "",
         "owner"      : ""

@@ -1,7 +1,6 @@
 from logs import logDecorator as lD 
 import jsonref, pprint
 import numpy as np 
-import pandas as pd 
 import matplotlib.pyplot as plt
 
 from psycopg2.sql import SQL, Identifier, Literal
