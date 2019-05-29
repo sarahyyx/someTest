@@ -2,7 +2,7 @@ from logs import logDecorator as lD
 import jsonref, pprint
 import json
 import numpy as np 
-import matplotlib.pyplot as plt
+import matplotlib.pyplot as plotting
 from tqdm import tqdm
 import operator
 

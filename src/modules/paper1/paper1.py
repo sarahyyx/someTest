@@ -49,6 +49,7 @@ def genRaceDict(logger, inputCSV):
 
 @lD.log(logBase + '.countMainRace')
 def countMainRace(logger, inputDict):
+
     '''print a line
     
     This function simply prints a single line
@@ -82,9 +83,112 @@ def countMainRace(logger, inputDict):
         return
 
     except Exception as e:
-        logger.error('genRaceDict failed because of {}'.format(e))
+        logger.error('countMainRace failed because of {}'.format(e))
 
     return raceDict
+
+@lD.log(logBase + '.countRaceSex')
+def countRaceSex(logger, inputDict):
+
+    '''print a line
+    
+    This function simply prints a single line
+    
+    Parameters
+    ----------
+    logger : {logging.Logger}
+        The logger used for logging error information
+    '''
+
+    try:
+
+        sexDict = {
+            'Male': {
+                'list': ['M', 'Male'],
+                'AAcount': None,
+                'NHPIcount': None,
+                'MRcount': None
+            },
+            'Female': {
+                'list': ['F', 'Female'],
+                'AAcount': None,
+                'NHPIcount': None,
+                'MRcount': None
+            }
+        }
+
+        raceLists = {
+            'AA': [],
+            'NH/PI': [],
+            'MR': []
+        }
+
+        for t in inputDict['AA']:
+            raceLists['AA'].append(t[0])
+        for t in inputDict['NH/PI']:
+            raceLists['NH/PI'].append(t[0])
+        for t in inputDict['MR']:
+            raceLists['MR'].append(t[0])
+
+  
+        var = ('M', 'Male')
+        query = SQL('''
+            SELECT 
+                distinct sex, race
+            FROM
+                raw_data.background
+            WHERE 
+                sex in {} and
+                race in {}
+
+            limit 10
+            ''').format(
+                Literal(var),
+                Literal(('Chinese', 'Asian american', 'Korean', 'Asian', 'Vietnamese', 'Indian', 'asian'))
+            )
+
+        data = pgIO.getAllData(query)
+        for d in data:
+            print(d)
+        # for race in raceLists:
+        #     for sex in sexDict:  
+        #         query = SQL('''
+        #             SELECT 
+        #                 COUNT(sex)
+        #             FROM
+        #                 raw_data.background
+        #             WHERE 
+        #                 sex in ({})
+        #             AND
+        #                 race in ({})
+        #             ''').format(
+        #                 Identifier(str(sexDict[sex]['list'])[1:-1]),
+        #                 Identifier(str(raceLists['AA'])[1:-1])
+        #                 )
+        #         data = pgIO.getAllData(query)
+        #         data = [d[0] for d in data]
+        #         print(data)
+        #         break
+
+        # query = '''
+        # SELECT
+        # COUNT(*)
+        # FROM raw_data.background
+        # WHERE
+        # sex in ('M', 'Male')
+        # AND
+        # race in ('Chinese', 'Asian american', 'Korean', 'Asian', 'Vietnamese', 'Indian', 'asian');
+        # '''
+        # data = pgIO.getAllData(query)
+        # data = [d[0] for d in data]
+        # print(data)
+
+        return
+
+    except Exception as e:
+        logger.error('countRaceSex failed because of {}'.format(e))
+
+    return
 
 @lD.log(logBase + '.main')
 def main(logger, resultsDict):
@@ -118,6 +222,8 @@ def main(logger, resultsDict):
 
     raceDict = genRaceDict('../data/intermediate/paperRaceCount.csv')
     countMainRace(raceDict)
+
+    countRaceSex(raceDict)
 
     print('Getting out of module paper1')
     print('-'*30)
