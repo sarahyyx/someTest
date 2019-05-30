@@ -50,10 +50,11 @@ def genRaceDict(logger, inputCSV):
 @lD.log(logBase + '.countMainRace')
 def countMainRace(logger, inputDict):
 
-    '''print a line
-    
-    This function simply prints a single line
-    
+    ''' 
+    Since the paper specifies 3 major races: AA, NH/PI and MR, there are many minor 
+    races belonging to each in the database. This counts all the minor races under each 
+    race and prints the value.
+
     Parameters
     ----------
     logger : {logging.Logger}
@@ -104,16 +105,16 @@ def countRaceSex(logger, inputDict):
 
         sexDict = {
             'Male': {
-                'list': ['M', 'Male'],
-                'AAcount': None,
-                'NHPIcount': None,
-                'MRcount': None
+                'tuple': ('M', 'Male'),
+                'AA': None,
+                'NH/PI': None,
+                'MR': None
             },
             'Female': {
-                'list': ['F', 'Female'],
-                'AAcount': None,
-                'NHPIcount': None,
-                'MRcount': None
+                'tuple': ('F', 'Female'),
+                'AA': None,
+                'NH/PI': None,
+                'MR': None
             }
         }
 
@@ -130,11 +131,10 @@ def countRaceSex(logger, inputDict):
         for t in inputDict['MR']:
             raceLists['MR'].append(t[0])
 
-  
-        var = ('M', 'Male')
-        query = SQL('''
+        for race in raceLists:
+            query = SQL('''
             SELECT 
-                distinct sex, race
+                COUNT(*)
             FROM
                 raw_data.background
             WHERE 
@@ -143,45 +143,37 @@ def countRaceSex(logger, inputDict):
 
             limit 10
             ''').format(
-                Literal(var),
-                Literal(('Chinese', 'Asian american', 'Korean', 'Asian', 'Vietnamese', 'Indian', 'asian'))
+                Literal(sexDict['Male']['tuple']),
+                Literal(tuple(raceLists[race]))
             )
 
-        data = pgIO.getAllData(query)
-        for d in data:
-            print(d)
-        # for race in raceLists:
-        #     for sex in sexDict:  
-        #         query = SQL('''
-        #             SELECT 
-        #                 COUNT(sex)
-        #             FROM
-        #                 raw_data.background
-        #             WHERE 
-        #                 sex in ({})
-        #             AND
-        #                 race in ({})
-        #             ''').format(
-        #                 Identifier(str(sexDict[sex]['list'])[1:-1]),
-        #                 Identifier(str(raceLists['AA'])[1:-1])
-        #                 )
-        #         data = pgIO.getAllData(query)
-        #         data = [d[0] for d in data]
-        #         print(data)
-        #         break
+            data = pgIO.getAllData(query)
+            data = [d[0] for d in data]
+            sexDict['Male'][race] = data
 
-        # query = '''
-        # SELECT
-        # COUNT(*)
-        # FROM raw_data.background
-        # WHERE
-        # sex in ('M', 'Male')
-        # AND
-        # race in ('Chinese', 'Asian american', 'Korean', 'Asian', 'Vietnamese', 'Indian', 'asian');
-        # '''
-        # data = pgIO.getAllData(query)
-        # data = [d[0] for d in data]
-        # print(data)
+        for race in raceLists:
+            query = SQL('''
+            SELECT 
+                COUNT(*)
+            FROM
+                raw_data.background
+            WHERE 
+                sex in {} and
+                race in {}
+
+            limit 10
+            ''').format(
+                Literal(sexDict['Female']['tuple']),
+                Literal(tuple(raceLists[race]))
+            )
+
+            data = pgIO.getAllData(query)
+            data = [d[0] for d in data]
+            sexDict['Female'][race] = data
+
+        print(sexDict)
+
+        print(raceLists)
 
         return
 
@@ -212,18 +204,22 @@ def main(logger, resultsDict):
     print('Main function of module paper1')
     print('='*30)
 
-    raceCount = queryDB.getRace()
+    # #Generating csv file with the count of all the races, for the purpose of manually marking each to classify them under the paper's races
+    # raceCount = queryDB.getRace()
 
-    with open('../data/raw_data/raceCount.csv','w+') as output:
-        csv_out=csv.writer(output)
-        csv_out.writerow(['race','count'])
-        for row in raceCount:
-            csv_out.writerow(row)
+    # with open('../data/raw_data/raceCount.csv','w+') as output:
+    #     csv_out=csv.writer(output)
+    #     csv_out.writerow(['race','count'])
+    #     for row in raceCount:
+    #         csv_out.writerow(row)
 
     raceDict = genRaceDict('../data/intermediate/paperRaceCount.csv')
-    countMainRace(raceDict)
 
-    countRaceSex(raceDict)
+    # countMainRace(raceDict)
+
+    # countRaceSex(raceDict)
+
+    queryDB.pushData(('1', 'Inpatient', 'M', 'Asian', '11111', '11111'))
 
     print('Getting out of module paper1')
     print('-'*30)
