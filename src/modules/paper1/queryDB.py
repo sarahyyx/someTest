@@ -19,7 +19,9 @@ logBase = config['logging']['logBase'] + '.modules.paper1.paper1'
 def getRace(logger):
     '''print a line
     
-    This function simply prints a single line
+    This function was used to get the race and count(race) for ALL the races in raw_data.background
+    After manucal selection and grouping, the races under each race in the paper (AA, NH/PI, MR) were manually entered into the json config file
+    Function was delected from the main after use
     
     Parameters
     ----------
@@ -45,11 +47,149 @@ def getRace(logger):
 
     return data
 
+@lD.log(logBase + '.countMainRace')
+def countMainRace(logger):
+    '''
+    This function queries the database and returns the counts of each main race as specified in the paper    
+    
+    Parameters
+    ----------
+    logger : {logging.Logger}
+        The logger used for logging error information
+    '''
+
+    try:
+        
+        query = '''
+        SELECT
+            DISTINCT race,
+            COUNT(race)
+        FROM 
+            sarah.newtable1data
+        GROUP BY 
+            race
+        '''
+
+        data = pgIO.getAllData(query)
+        data = [d[1] for d in data]
+
+    except Exception as e:
+        logger.error('countMainRace failed because of {}'.format(e))
+
+    return data
+
+@lD.log(logBase + '.countRaceAge')
+def countRaceAge(logger):
+    '''
+    
+    Parameters
+    ----------
+    logger : {logging.Logger}
+        The logger used for logging error information
+    '''
+
+    try:
+        total = []
+        for race in paper1_config["inputs"]["races"]:
+            counts = []
+            for lower, upper in zip(['1', '12', '18', '35', '50'], ['11', '17', '34', '49', '100']):
+                query = SQL('''
+                SELECT
+                    count(*)
+                FROM 
+                    sarah.newtable1data
+                WHERE 
+                    age >= {} AND age <= {} and race = {}
+                ''').format(
+                    Literal(lower),
+                    Literal(upper),
+                    Literal(race)
+                )
+                data = [d[0] for d in pgIO.getAllData(query)]
+                #print("age range: "+str(lower)+"-"+ str(upper)+" count: "+str(data))
+                counts.append(data[0])
+            total.append(counts)
+
+    except Exception as e:
+        logger.error('countRaceAge failed because of {}'.format(e))
+
+    return total
+
+@lD.log(logBase + '.countRaceSex')
+def countRaceSex(logger):
+    '''
+    
+    Parameters
+    ----------
+    logger : {logging.Logger}
+        The logger used for logging error information
+    '''
+
+    try:
+        total = []
+        for race in paper1_config["inputs"]["races"]:
+            counts = []
+            for sex in paper1_config["inputs"]["sexes"]:
+                query = SQL('''
+                SELECT
+                    count(*)
+                FROM 
+                    sarah.newtable1data
+                WHERE 
+                    sex = {} AND race = {}
+                ''').format(
+                    Literal(sex),
+                    Literal(race)
+                )
+                data = [d[0] for d in pgIO.getAllData(query)]
+                counts.append(data[0])
+            total.append(counts)
+
+    except Exception as e:
+        logger.error('countRaceSex failed because of {}'.format(e))
+
+    return total
+
+@lD.log(logBase + '.countRaceSetting')
+def countRaceSetting(logger):
+    '''
+    
+    Parameters
+    ----------
+    logger : {logging.Logger}
+        The logger used for logging error information
+    '''
+
+    try:
+        total = []
+        for race in paper1_config["inputs"]["races"]:
+            counts = []
+            for setting in paper1_config["inputs"]["settings"]:
+                query = SQL('''
+                SELECT
+                    count(*)
+                FROM 
+                    sarah.newtable1data
+                WHERE 
+                    visit_type = {} AND race = {}
+                ''').format(
+                    Literal(setting),
+                    Literal(race)
+                )
+                data = [d[0] for d in pgIO.getAllData(query)]
+                counts.append(data[0])
+            total.append(counts)
+
+    except Exception as e:
+        logger.error('countRaceSetting failed because of {}'.format(e))
+
+    return total
+
 @lD.log(logBase + '.pushData')
 def pushData(logger, dataTuple):
     '''print a line
     
-    This function simply prints a single line
+    This function takes in a tuple containing the data to be inserted
     
     Parameters
     ----------
@@ -70,9 +210,18 @@ def pushData(logger, dataTuple):
         print(status)
 
     except Exception as e:
-        logger.error('doSomething failed because of {}'.format(e))
+        logger.error('pushData failed because of {}'.format(e))
 
     return
+
+@lD.log(logBase + '.getTable1dataPP')
+def getTable1dataPP(logger, data):
+    try: 
+        data = [d[0] for d in data]
+    except Exception as e:
+        logger.error(f'{e}')
+        return Counter([])
+
 
 @lD.log(logBase + '.getTable1data')
 def getTable1data(logger):
@@ -94,7 +243,9 @@ def getTable1data(logger):
             t1.age,
             t1.visit_type, 
             t2.sex,
-            t2.race
+            t2.race,
+            t1.siteid,
+            t1.backgroundid
         FROM 
             raw_data.typepatient t1
         INNER JOIN 
