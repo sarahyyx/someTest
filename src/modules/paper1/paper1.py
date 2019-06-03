@@ -10,6 +10,7 @@ from psycopg2.sql import SQL, Identifier, Literal
 
 from lib.databaseIO import pgIO
 from modules.paper1 import queryDB
+from modules.paper1 import reportWriter
 
 config = jsonref.load(open('../config/config.json'))
 paper1_config = jsonref.load(open('../config/modules/paper1.json'))
@@ -96,6 +97,12 @@ def main(logger, resultsDict):
     countDict["MR"].append(raceSettingCounts[2])
 
     print(countDict)
+
+    reportWriter.genIntro()
+    reportWriter.genRace(countDict)
+    reportWriter.genRaceAge(countDict)
+    reportWriter.genRaceSex(countDict)
+    reportWriter.genRaceSetting(countDict)
 
     # queryDB.pushData(('1', 'Inpatient', 'M', 'Asian', '11111', '11111'))
 

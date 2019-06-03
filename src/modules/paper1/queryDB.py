@@ -59,24 +59,25 @@ def countMainRace(logger):
     '''
 
     try:
-        
-        query = '''
-        SELECT
-            DISTINCT race,
-            COUNT(race)
-        FROM 
-            sarah.newtable1data
-        GROUP BY 
-            race
-        '''
-
-        data = pgIO.getAllData(query)
-        data = [d[1] for d in data]
+        total = []
+        for race in paper1_config["inputs"]["races"]:
+            query = SQL('''
+            SELECT
+                COUNT(*)
+            FROM 
+                sarah.newtable1data
+            WHERE
+                race = {}
+            ''').format(
+                Literal(race)
+            )
+            data = [d[0] for d in pgIO.getAllData(query)]
+            total.append(data[0])
 
     except Exception as e:
         logger.error('countMainRace failed because of {}'.format(e))
 
-    return data
+    return total
 
 @lD.log(logBase + '.countRaceAge')
 def countRaceAge(logger):
